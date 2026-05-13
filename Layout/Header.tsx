@@ -25,7 +25,7 @@ export default function Header() {
           <img
             src="/ANIX.png"
             alt="Anax Imperium Logo"
-            className="h-30 w-auto object-contain"
+            className="h-35 w-auto object-contain"
             style={{ mixBlendMode: "multiply", imageRendering: "crisp-edges" }}
           />
         </a>

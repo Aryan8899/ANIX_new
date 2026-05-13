@@ -36,7 +36,7 @@ const plans = [
     highlight: true,
   },
   {
-    badge: "Complete Package",
+    badge: "Starting Price",
     category: "Startup Formation",
     icon: (
       <svg className="w-9 h-9 text-[#D0185A]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">

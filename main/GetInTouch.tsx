@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useState } from "react";
 
 const contactCards = [
@@ -54,6 +53,8 @@ export default function GetInTouch() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [btnHovered, setBtnHovered] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -67,196 +68,321 @@ export default function GetInTouch() {
   };
 
   return (
-    <section className="w-full bg-pink-50 py-20 px-6 md:px-16">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+    <>
+      {/* ── Keyframes ── move to globals.css if preferred */}
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeRight {
+          from { opacity: 0; transform: translateX(-18px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeLeft {
+          from { opacity: 0; transform: translateX(22px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes successPop {
+          0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+          65%  { transform: scale(1.2) rotate(5deg);  opacity: 1; }
+          100% { transform: scale(1) rotate(0deg);    opacity: 1; }
+        }
+        @keyframes successFade {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes iconBob {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(-3px); }
+        }
+        @keyframes shimmer {
+          0%   { transform: translateX(-100%) skewX(-12deg); }
+          100% { transform: translateX(220%) skewX(-12deg); }
+        }
+      `}</style>
 
-        {/* ── Left Column ── */}
-        <div>
-          {/* Header */}
-          <p className="text-[#D0185A] text-xs font-bold tracking-[0.2em] uppercase mb-4">
-            Get In Touch
-          </p>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
-            Let's Build Your Financial<br />Architecture Together.
-          </h2>
-          <p className="text-gray-500 text-sm leading-relaxed mb-10 max-w-sm">
-            Whether you're a startup founder, a growing MSME, or a global enterprise —
-            reach out for a free, no-obligation consultation.
-          </p>
+      <section className="w-full bg-pink-50 py-20 px-6 md:px-16">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
-          {/* Contact Cards */}
-          <div className="flex flex-col gap-4">
-            {contactCards.map((card) => (
-              <div
-                key={card.label}
-                className="flex items-start gap-4 bg-white border border-pink-100 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-shadow duration-200"
-              >
-                <div className="w-9 h-9 rounded-full bg-pink-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  {card.icon}
-                </div>
-                <div>
-                  <p className="text-[#D0185A] text-xs font-bold tracking-wide uppercase mb-0.5">
-                    {card.label}
-                  </p>
-                  {card.lines.map((line, i) => (
-                    <p key={i} className="text-gray-600 text-sm leading-snug">
-                      {line}
+          {/* ── Left Column ── */}
+          <div>
+            {/* Header */}
+            <p
+              className="text-[#D0185A] text-xs font-bold tracking-[0.2em] uppercase mb-4"
+              style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.05s", opacity: 0 }}
+            >
+              Get In Touch
+            </p>
+            <h2
+              className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-4"
+              style={{ animation: "fadeUp 0.55s ease both", animationDelay: "0.13s", opacity: 0 }}
+            >
+              Let's Build Your Financial<br />Architecture Together.
+            </h2>
+            <p
+              className="text-gray-500 text-sm leading-relaxed mb-10 max-w-sm"
+              style={{ animation: "fadeUp 0.55s ease both", animationDelay: "0.21s", opacity: 0 }}
+            >
+              Whether you're a startup founder, a growing MSME, or a global enterprise —
+              reach out for a free, no-obligation consultation.
+            </p>
+
+            {/* Contact Cards — staggered */}
+            <div className="flex flex-col gap-4">
+              {contactCards.map((card, i) => (
+                <div
+                  key={card.label}
+                  onMouseEnter={() => setHoveredCard(card.label)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  className="flex items-start gap-4 bg-white border border-pink-100 rounded-2xl px-5 py-4 relative overflow-hidden"
+                  style={{
+                    boxShadow: hoveredCard === card.label
+                      ? "0 8px 24px -4px rgba(208,24,90,0.12)"
+                      : "0 1px 4px rgba(0,0,0,0.05)",
+                    transform: hoveredCard === card.label ? "translateX(4px)" : "translateX(0)",
+                    transition: "box-shadow 0.22s, transform 0.22s",
+                    animation: "fadeRight 0.5s ease both",
+                    animationDelay: `${0.28 + i * 0.1}s`,
+                    opacity: 0,
+                  }}
+                >
+                  {/* Shimmer on hover */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%)",
+                      animation: hoveredCard === card.label ? "shimmer 0.6s ease forwards" : "none",
+                      pointerEvents: "none",
+                    }}
+                  />
+
+                  <div
+                    className="w-9 h-9 rounded-full bg-pink-50 flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{
+                      animation: hoveredCard === card.label ? "iconBob 0.6s ease-in-out infinite" : "none",
+                    }}
+                  >
+                    {card.icon}
+                  </div>
+                  <div className="relative z-10">
+                    <p className="text-[#D0185A] text-xs font-bold tracking-wide uppercase mb-0.5">
+                      {card.label}
                     </p>
-                  ))}
+                    {card.lines.map((line, j) => (
+                      <p key={j} className="text-gray-600 text-sm leading-snug">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {/* Payment Modes */}
-            <div className="bg-white border border-pink-200 rounded-2xl px-5 py-4 shadow-sm">
-              <p className="text-[#D0185A] text-xs font-bold tracking-wide uppercase mb-3">
-                🔒 Accepted Payment Modes
-              </p>
-              <div className="flex gap-3 mb-3">
-                <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-                    <rect x="2" y="5" width="20" height="14" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
-                  UPI
-                </span>
-                <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" />
-                  </svg>
-                  Net Banking
-                </span>
+              {/* Payment Modes */}
+              <div
+                className="bg-white border border-pink-200 rounded-2xl px-5 py-4 shadow-sm"
+                style={{ animation: "fadeRight 0.5s ease both", animationDelay: "0.58s", opacity: 0 }}
+              >
+                <p className="text-[#D0185A] text-xs font-bold tracking-wide uppercase mb-3">
+                  🔒 Accepted Payment Modes
+                </p>
+                <div className="flex gap-3 mb-3">
+                  <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                      <rect x="2" y="5" width="20" height="14" rx="2" />
+                      <path d="M2 10h20" />
+                    </svg>
+                    UPI
+                  </span>
+                  <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" />
+                    </svg>
+                    Net Banking
+                  </span>
+                </div>
+                <p className="text-gray-400 text-[11px] leading-snug">
+                  Secure transfers only. Payment details shared post-consultation and service agreement.
+                </p>
               </div>
-              <p className="text-gray-400 text-[11px] leading-snug">
-                Secure transfers only. Payment details shared post-consultation and service agreement.
-              </p>
             </div>
           </div>
-        </div>
 
-        {/* ── Right Column — Form ── */}
-        <div className="bg-white rounded-3xl shadow-md border border-pink-100 px-8 py-9">
-          {submitted ? (
-            <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#D0185A]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Enquiry Sent!</h3>
-              <p className="text-gray-500 text-sm max-w-xs">
-                Thank you! We'll reach out to schedule your free consultation within 24 hours.
-              </p>
-              <button
-                onClick={() => { setSubmitted(false); setForm({ name: "", phone: "", email: "", service: "", message: "" }); }}
-                className="mt-2 text-[#D0185A] text-sm font-semibold underline underline-offset-2 cursor-pointer"
-              >
-                Submit another enquiry
-              </button>
-            </div>
-          ) : (
-            <>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Book a Free Consultation</h3>
-              <p className="text-gray-400 text-sm mb-7">
-                Tell us about your business and we'll reach out to schedule at a time that works for you.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
-                {/* Name */}
-                <div>
-                  <label className="block text-gray-700 text-xs font-semibold mb-1.5">
-                    Your Name <span className="text-[#D0185A]">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Full Name"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition"
-                  />
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label className="block text-gray-700 text-xs font-semibold mb-1.5">
-                    Phone / WhatsApp <span className="text-[#D0185A]">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="+91 XXXXX XXXXX"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition"
-                  />
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="mb-5">
-                <label className="block text-gray-700 text-xs font-semibold mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="your@email.com"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition"
-                />
-              </div>
-
-              {/* Service */}
-              <div className="mb-5">
-                <label className="block text-gray-700 text-xs font-semibold mb-1.5">
-                  Service You Need
-                </label>
-                <select
-                  name="service"
-                  value={form.service}
-                  onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition bg-white appearance-none"
+          {/* ── Right Column — Form ── */}
+          <div
+            className="bg-white rounded-3xl shadow-md border border-pink-100 px-8 py-9"
+            style={{ animation: "fadeLeft 0.6s ease both", animationDelay: "0.18s", opacity: 0 }}
+          >
+            {submitted ? (
+              <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center gap-4">
+                <div
+                  className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center"
+                  style={{ animation: "successPop 0.5s ease both", animationDelay: "0.05s", opacity: 0 }}
                 >
-                  <option value="">Select a service...</option>
-                  {services.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
+                  <svg className="w-8 h-8 text-[#D0185A]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                </div>
+                <h3
+                  className="text-xl font-bold text-gray-900"
+                  style={{ animation: "successFade 0.45s ease both", animationDelay: "0.25s", opacity: 0 }}
+                >
+                  Enquiry Sent!
+                </h3>
+                <p
+                  className="text-gray-500 text-sm max-w-xs"
+                  style={{ animation: "successFade 0.45s ease both", animationDelay: "0.35s", opacity: 0 }}
+                >
+                  Thank you! We'll reach out to schedule your free consultation within 24 hours.
+                </p>
+                <button
+                  onClick={() => { setSubmitted(false); setForm({ name: "", phone: "", email: "", service: "", message: "" }); }}
+                  className="mt-2 text-[#D0185A] text-sm font-semibold underline underline-offset-2 cursor-pointer"
+                  style={{ animation: "successFade 0.45s ease both", animationDelay: "0.45s", opacity: 0 }}
+                >
+                  Submit another enquiry
+                </button>
               </div>
+            ) : (
+              <>
+                <h3
+                  className="text-xl font-bold text-gray-900 mb-1"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.3s", opacity: 0 }}
+                >
+                  Book a Free Consultation
+                </h3>
+                <p
+                  className="text-gray-400 text-sm mb-7"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.38s", opacity: 0 }}
+                >
+                  Tell us about your business and we'll reach out to schedule at a time that works for you.
+                </p>
 
-              {/* Message */}
-              <div className="mb-7">
-                <label className="block text-gray-700 text-xs font-semibold mb-1.5">
-                  Brief Message
-                </label>
-                <textarea
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  rows={4}
-                  placeholder="Tell us briefly about your business and what you need help with..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition resize-none"
-                />
-              </div>
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.44s", opacity: 0 }}
+                >
+                  {/* Name */}
+                  <div>
+                    <label className="block text-gray-700 text-xs font-semibold mb-1.5">
+                      Your Name <span className="text-[#D0185A]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Full Name"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition"
+                    />
+                  </div>
 
-              {/* Submit */}
-              <button
-                onClick={handleSubmit}
-                className="w-full bg-[#D0185A] hover:bg-[#b01248] text-white font-semibold text-sm py-3.5 rounded-full transition-colors duration-200 cursor-pointer mb-4"
-              >
-                Send My Enquiry →
-              </button>
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-gray-700 text-xs font-semibold mb-1.5">
+                      Phone / WhatsApp <span className="text-[#D0185A]">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="+91 XXXXX XXXXX"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition"
+                    />
+                  </div>
+                </div>
 
-              <p className="text-center text-gray-400 text-[11px]">
-                🔒 We respect your privacy. Your details are never shared.
-              </p>
-            </>
-          )}
+                {/* Email */}
+                <div
+                  className="mb-5"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.5s", opacity: 0 }}
+                >
+                  <label className="block text-gray-700 text-xs font-semibold mb-1.5">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="your@email.com"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition"
+                  />
+                </div>
+
+                {/* Service */}
+                <div
+                  className="mb-5"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.56s", opacity: 0 }}
+                >
+                  <label className="block text-gray-700 text-xs font-semibold mb-1.5">
+                    Service You Need
+                  </label>
+                  <select
+                    name="service"
+                    value={form.service}
+                    onChange={handleChange}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition bg-white appearance-none"
+                  >
+                    <option value="">Select a service...</option>
+                    {services.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Message */}
+                <div
+                  className="mb-7"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.62s", opacity: 0 }}
+                >
+                  <label className="block text-gray-700 text-xs font-semibold mb-1.5">
+                    Brief Message
+                  </label>
+                  <textarea
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    rows={4}
+                    placeholder="Tell us briefly about your business and what you need help with..."
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D0185A]/30 focus:border-[#D0185A] transition resize-none"
+                  />
+                </div>
+
+                {/* Submit */}
+                <div style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.68s", opacity: 0 }}>
+                  <button
+                    onClick={handleSubmit}
+                    onMouseEnter={() => setBtnHovered(true)}
+                    onMouseLeave={() => setBtnHovered(false)}
+                    className="w-full text-white font-semibold text-sm py-3.5 rounded-full cursor-pointer mb-4 border-none relative overflow-hidden"
+                    style={{
+                      background: btnHovered ? "#b01248" : "#D0185A",
+                      transform: btnHovered ? "translateY(-2px)" : "translateY(0)",
+                      boxShadow: btnHovered
+                        ? "0 8px 24px -4px rgba(208,24,90,0.38)"
+                        : "0 2px 8px -2px rgba(208,24,90,0.2)",
+                      transition: "background 0.2s, transform 0.2s, box-shadow 0.2s",
+                    }}
+                  >
+                    Send My Enquiry →
+                  </button>
+                </div>
+
+                <p
+                  className="text-center text-gray-400 text-[11px]"
+                  style={{ animation: "fadeUp 0.5s ease both", animationDelay: "0.74s", opacity: 0 }}
+                >
+                  🔒 We respect your privacy. Your details are never shared.
+                </p>
+              </>
+            )}
+          </div>
+
         </div>
-
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
