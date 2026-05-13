@@ -37,17 +37,19 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className="lg:col-span-1">
+
             <div className="mb-5">
-              <span className="text-white font-extrabold text-xl tracking-tight">
-                ANAX{" "}
-                <span className="text-[#D0185A]">IMPERIUM</span>
-              </span>
+              <img
+                src="/Fotter_ANIX.png"
+                alt="Anax Imperium"
+                className="h-50 w-auto object-contain"
+              />
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            {/* <p className="text-gray-400 text-sm leading-relaxed">
               Complete Business Solutions. Comprehensive compliance and advisory
               services for startups, MSMEs, and global enterprises across India.
               Operating from Gurugram, Haryana.
-            </p>
+            </p> */}
           </div>
 
           {/* Compliance & Audit */}
@@ -127,7 +129,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-    
+
     </footer>
   );
 }

@@ -19,13 +19,14 @@ export default function Header() {
       {/* Subtle pink gradient strip at bottom of header */}
       <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-pink-300 to-transparent opacity-60 pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-[64px] flex items-center justify-between">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center select-none shrink-0">
           <img
             src="/ANIX.png"
             alt="Anax Imperium Logo"
-            className="h-10 w-auto object-contain"
+            className="h-30 w-auto object-contain"
+            style={{ mixBlendMode: "multiply", imageRendering: "crisp-edges" }}
           />
         </a>
 
